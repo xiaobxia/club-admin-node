@@ -3,7 +3,10 @@
  */
 const AuthController = require('./sys/authController');
 const UserController = require('./sys/userController');
+const BroadcastController = require('./sys/broadcastController');
+
 module.exports = {
   authController: new AuthController(),
-  userController: new UserController()
+  userController: new UserController(),
+  broadcastController: new BroadcastController()
 };

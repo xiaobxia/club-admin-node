@@ -4,6 +4,7 @@
 const UserORM = require('./sys/userORM');
 const LogAuditORM = require('./sys/logAuditORM');
 const EmailVerifyORM = require('./sys/emailVerifyORM');
+const BroadcastORM = require('./sys/broadcastORM');
 
 module.exports = {
   userORM(connection) {
@@ -14,5 +15,8 @@ module.exports = {
   },
   emailVerifyORM(connection) {
     return new EmailVerifyORM(connection);
+  },
+  broadcastORM(connection) {
+    return new BroadcastORM(connection);
   }
 };

@@ -20,11 +20,11 @@ module.exports = class BaseService extends BaseModel {
 
   checkDBResult(result, ifNullMsg, ifExistMsg) {
     if (!result.length) {
-      if(ifNullMsg) {
+      if (ifNullMsg) {
         this.throwError(ifNullMsg);
       }
     } else {
-      if(ifExistMsg) {
+      if (ifExistMsg) {
         this.throwError(ifExistMsg);
       }
     }

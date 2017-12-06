@@ -130,7 +130,7 @@ class Parameter {
     throw new TypeError('check must be function or regexp');
   }
 }
-;
+
 
 /**
  * Module exports

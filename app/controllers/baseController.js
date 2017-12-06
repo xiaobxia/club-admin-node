@@ -15,8 +15,8 @@ module.exports = class BaseController extends BaseModel {
     let _responseData = {};
     _responseData.status = responseData.status || 0;
     _responseData.message = responseData.message || '';
-    if(responseData.data) {
-      _responseData.data = responseData.data
+    if (responseData.data) {
+      _responseData.data = responseData.data;
     }
     ctx.body = _responseData;
   }
@@ -53,7 +53,7 @@ module.exports = class BaseController extends BaseModel {
   }
 
   mysqlRelease(connection) {
-    if(connection) {
+    if (connection) {
       connection.release();
     }
   }
@@ -83,7 +83,7 @@ module.exports = class BaseController extends BaseModel {
   }
 
   mysqlRollback(connection) {
-    if(connection) {
+    if (connection) {
       connection.rollback();
     }
   }

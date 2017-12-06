@@ -99,7 +99,8 @@ module.exports = class BaseORM extends BaseModel {
     let str = '';
     for (let key in where) {
       if (where.hasOwnProperty(key)) {
-        values.push(this.localUtil.camelCaseToHyphen(key), where[key]);
+        // values.push(this.localUtil.camelCaseToHyphen(key), where[key]);
+        values.push(key, where[key]);
         if (str === '') {
           str += 'WHERE ??=?';
         } else {
@@ -145,7 +146,7 @@ module.exports = class BaseORM extends BaseModel {
     let _whereType = _option.whereType || this.defaultWhereType;
     let _where = _option.where || this.defaultWhere;
     let _table = _option.table || this.defaultTable;
-    _data = this.keyToHyphen(_data);
+    // _data = this.keyToHyphen(_data);
     let queryObj = this.formatWhere(`UPDATE ${_table} SET ? {WHERE}`, _where, _whereType);
     return this.query({
       sql: queryObj.sql,
@@ -157,7 +158,7 @@ module.exports = class BaseORM extends BaseModel {
     let _option = option || {};
     let _data = _option.data || {};
     let _table = _option.table || this.defaultTable;
-    _data = this.keyToHyphen(_data);
+    // _data = this.keyToHyphen(_data);
     return this.query({
       sql: `INSERT INTO ${_table} SET ?`,
       values: _data
