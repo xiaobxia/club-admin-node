@@ -12,7 +12,7 @@ const session_secret = config.server.session_secret;
 app.keys = [session_secret];
 const CONFIG = {
   key: session_secret,
-  maxAge: 1000 * 60 * 20,
+  // maxAge: 1000 * 60 * 20,
   overwrite: true,
   httpOnly: true,
   signed: true,

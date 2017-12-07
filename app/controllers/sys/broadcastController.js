@@ -9,11 +9,17 @@ module.exports = class BroadcastController extends BaseController {
    */
   list() {
     return async (ctx) => {
+      const query = ctx.request.query;
+      //分页
+      const pagingModel = this.paging(query.pageIndex, query.pageSize);
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
         const broadcastService = this.services.broadcastService(connection);
-        const broadcastList = await broadcastService.getBroadcasts();
+        //得到表
+        let broadcastList = await broadcastService.getBroadcasts(pagingModel.start, pagingModel.offset);
+        //转换格式
+        broadcastList = this.localUtil.listToCamelCase(broadcastList);
         this.wrapResult(ctx, {data: {success: true, list: broadcastList}});
         this.mysqlRelease(connection);
       } catch (error) {

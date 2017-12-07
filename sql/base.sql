@@ -5,6 +5,9 @@ DROP TABLE IF EXISTS sys_user;
 DROP TABLE IF EXISTS sys_email_verify;
 
 DROP TABLE IF EXISTS broadcast;
+
+DROP TABLE IF EXISTS system_message;
+
 /*==============================================================*/
 /* Table: sys_log_audit                                         */
 /*==============================================================*/
@@ -12,7 +15,7 @@ CREATE TABLE sys_log_audit
 (
    id                   INT(11) NOT NULL AUTO_INCREMENT,
    log_type             VARCHAR(10) NOT NULL,
-   user_id              INT(11) NOT NULL,
+   user_uuid            CHAR(32) NOT NULL COMMENT '用户的uuid',
    user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (id)
@@ -24,7 +27,8 @@ AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 /*==============================================================*/
 CREATE TABLE sys_user
 (
-   user_id              INT(11) NOT NULL AUTO_INCREMENT,
+   id                   INT(11) NOT NULL AUTO_INCREMENT,
+   uuid                 CHAR(32) NOT NULL COMMENT '用户的uuid',
    user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
    password             VARCHAR(60) NOT NULL COMMENT '登陆账户密码',
    mobile               VARCHAR(20) NOT NULL DEFAULT '',
@@ -39,7 +43,7 @@ CREATE TABLE sys_user
    unlock_date          DATETIME,
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY (user_id)
+   PRIMARY KEY (id)
 )
 AUTO_INCREMENT=1001 DEFAULT CHARSET=UTF8;
 
@@ -58,6 +62,7 @@ CREATE TABLE sys_email_verify
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (id)
 )
+AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 
 /*==============================================================*/
 /* Table: broadcast(广播)                                          */
@@ -68,14 +73,15 @@ CREATE TABLE broadcast
    uuid                 CHAR(32) NOT NULL COMMENT '广播的uuid',
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   starte_date          DATETIME COMMENT '广播上线时间',
+   start_date          DATETIME COMMENT '广播上线时间',
    end_date             DATETIME COMMENT '广播下线时间',
-   state                CHAR(1) NOT NULL DEFAULT 'A' COMMENT 'A-在用，X-失效',
+   state                CHAR(1) NOT NULL DEFAULT 'U' COMMENT 'U-未启用, A-在用，X-失效',
    platform             CHAR(10) NOT NULL DEFAULT 'web' COMMENT '广播上线平台',
    title                VARCHAR(150) NOT NULL DEFAULT '' COMMENT '广播的标题',
    url                  VARCHAR(255) NOT NULL DEFAULT '' COMMENT '广播的地址',
    PRIMARY KEY (id)
 )
+AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 
 /*==============================================================*/
 /* Table: system_message(系统消息)                               */
@@ -87,8 +93,9 @@ CREATE TABLE system_message
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    start_date           DATETIME COMMENT '系统消息发送时间',
-   state                CHAR(1) NOT NULL DEFAULT 'A' COMMENT 'A-在用，X-失效',
+   state                CHAR(1) NOT NULL DEFAULT 'U' COMMENT 'U-未启用, A-在用，X-失效',
    title                VARCHAR(150) NOT NULL DEFAULT '' COMMENT '系统消息的标题',
    url                  VARCHAR(255) NOT NULL DEFAULT '' COMMENT '系统消息的地址',
    PRIMARY KEY (id)
 )
+AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;

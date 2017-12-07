@@ -31,8 +31,7 @@ module.exports = class BaseORM extends BaseModel {
             this.logger.error(error.stack);
             reject(error);
           } else {
-            let _result = this.listToCamelCase(results);
-            resolve(_result);
+            resolve(results);
           }
         }
       );
@@ -40,66 +39,11 @@ module.exports = class BaseORM extends BaseModel {
     });
   }
 
-  /**
-   * 连字符转驼峰
-   * @param data
-   * @returns {Array}
-   */
-  listToCamelCase(data) {
-    let tempData = [];
-    for (let k = 0, len = data.length; k < len; k++) {
-      let tempItem = {};
-      for (let str in data[k]) {
-        if (data[k].hasOwnProperty(str)) {
-          tempItem[this.localUtil.hyphenToCamelCase(str)] = data[k][str];
-        }
-      }
-      tempData.push(tempItem);
-    }
-    return tempData;
-  }
-
-  keyToCamelCase(data) {
-    let tempItem = {};
-    for (let str in data) {
-      if (data.hasOwnProperty(str)) {
-        tempItem[this.localUtil.hyphenToCamelCase(str)] = data[str];
-      }
-    }
-    return tempItem;
-  }
-
-  /**
-   * 驼峰转连字符
-   * @param data
-   * @returns {{}}
-   */
-  listToHyphen(data) {
-    let tempItem = {};
-    for (let key in data) {
-      if (data.hasOwnProperty(key)) {
-        tempItem[this.localUtil.camelCaseToHyphen(key)] = data[key];
-      }
-    }
-    return tempItem;
-  }
-
-  keyToHyphen(data) {
-    let tempItem = {};
-    for (let str in data) {
-      if (data.hasOwnProperty(str)) {
-        tempItem[this.localUtil.camelCaseToHyphen(str)] = data[str];
-      }
-    }
-    return tempItem;
-  }
-
   formatWhere(sql, where, whereType) {
     let values = [];
     let str = '';
     for (let key in where) {
       if (where.hasOwnProperty(key)) {
-        // values.push(this.localUtil.camelCaseToHyphen(key), where[key]);
         values.push(key, where[key]);
         if (str === '') {
           str += 'WHERE ??=?';
@@ -162,6 +106,71 @@ module.exports = class BaseORM extends BaseModel {
     return this.query({
       sql: `INSERT INTO ${_table} SET ?`,
       values: _data
+    });
+  }
+
+  /**
+   * 适用于管理平台
+   */
+
+  //增
+  addRecord(data) {
+    return this.query({
+      sql: `INSERT INTO ${this.defaultTable} SET ?`,
+      values: [data]
+    });
+  }
+
+  //删
+  deleteRecordById(id) {
+    return this.query({
+      sql: `DELETE FROM ${this.defaultTable} WHERE id=?`,
+      values: id
+    });
+  }
+
+  //改
+  updateRecordById(id, data) {
+    return this.query({
+      sql: `UPDATE ${this.defaultTable} SET ? WHERE id=?`,
+      values: [data, id]
+    });
+  }
+
+  //查
+
+  getAllRawRecordById(id) {
+    return this.query({
+      sql: `SELECT * FROM ${this.defaultTable} WHERE id=?`,
+      values: [id]
+    });
+  }
+
+  getAllRawRecordsCount() {
+    return this.query(`SELECT COUNT(*) AS count FROM ${this.defaultTable}`);
+  }
+
+  getAllRawRecordsByIds(ids) {
+    return this.query({
+      sql: `SELECT * FROM ${this.defaultTable} WHERE id IN (?)`,
+      values: [ids]
+    });
+  }
+
+  getAllRawRecords(start, offset) {
+    return this.query({
+      sql: `SELECT id FROM ${this.defaultTable} ORDER BY id DESC LIMIT ?,?`,
+      values: [start, offset]
+    }).then((results) => {
+      if (!results.length) {
+        return results;
+      } else {
+        let ids = [];
+        for (let k = 0, len = results.length; k < len; k++) {
+          ids.push(results[k]['id']);
+        }
+        return this.getAllRawRecordsByIds(ids);
+      }
     });
   }
 };

@@ -10,6 +10,26 @@ module.exports = class BaseController extends BaseModel {
     this.services = services;
   }
 
+  paging(pageIndex, pageSize, defaultValue) {
+    let defaultPageIndex = 1,
+      defaultPageSize = 10;
+    if (defaultValue) {
+      defaultPageIndex = defaultValue.pageIndex || defaultPageIndex;
+      defaultPageSize = defaultValue.pageSize || defaultPageSize;
+    }
+    //得是个整数
+    let pageIndexT = parseInt(pageIndex, 10),
+      pageSizeT = parseInt(pageSize, 10),
+      index = isNaN(pageIndexT) ? defaultPageIndex : pageIndexT,
+      size = isNaN(pageSizeT) ? defaultPageSize : pageSizeT;
+    return {
+      pageIndex: index,
+      pageSize: size,
+      start: (index - 1) * size,
+      offset: size
+    };
+  }
+
   wrapResult(ctx, responseData) {
     responseData = responseData || {};
     let _responseData = {};

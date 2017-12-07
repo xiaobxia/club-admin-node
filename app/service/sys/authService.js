@@ -10,25 +10,25 @@ module.exports = class LoginService extends BaseService {
   async login(account, password) {
     const errorMessage = this.localConst.errorMessage;
     const userORM = this.ORMs.userORM(this.connection);
-    let dbResult = await userORM.getUserRawByAccount(account);
+    let dbResult = await userORM.getRawRecordsByAccount(account);
     this.checkDBResult(dbResult, errorMessage.ACCOUNT_OR_PWD_ERROR);
     let user = dbResult[0];
-    const isForceLogin = user['forceLogin'] === 'Y';
-    let isLockBefore = user['isLocked'] === 'Y';
+    const isForceLogin = user['force_login'] === 'Y';
+    let isLockBefore = user['is_locked'] === 'Y';
     //强制登录
     if(isForceLogin) {
       return user;
     }
     //判断解锁
     if (isLockBefore) {
-      if (moment().isAfter(user['unlockDate'])) {
-        await userORM.updateUserByUserId(user['userId'], {
-          loginFail: 0,
-          isLocked: 'N',
-          unLockDate: null
+      if (moment().isAfter(user['unlock_date'])) {
+        await userORM.getAllRawRecordById(user['id'], {
+          login_fail: 0,
+          is_locked: 'N',
+          unlock_date: null
         });
         //得到用户新状态
-        dbResult = await userORM.getUserByUserId(user['userId']);
+        dbResult = await userORM.getAllRawRecordById(user['id']);
         user = dbResult[0];
       } else {
         this.throwError(errorMessage.LOCK_USER);
@@ -37,43 +37,43 @@ module.exports = class LoginService extends BaseService {
     //验证密码
     if (user['password'] === password) {
       //清空尝试，之前没锁定并且失败数不为0
-      if (!isLockBefore && user['loginFail'] !==0) {
-        await userORM.updateUserByUserId(user['userId'], {
-          loginFail: 0,
-          isLocked: 'N',
-          unlockDate: null
+      if (!isLockBefore && user['login_fail'] !==0) {
+        await userORM.updateRecordById(user['id'], {
+          login_fail: 0,
+          is_locked: 'N',
+          unlock_date: null
         });
       }
       const logAuditORM = this.ORMs.logAuditORM(this.connection);
-      await logAuditORM.addLog({
-        logType: 'login',
-        userId: user['userId'],
-        userName: user['userName']
+      await logAuditORM.addRecord({
+        log_type: 'login',
+        user_uuid: user['uuid'],
+        user_name: user['user_name']
       });
       return user;
     } else {
       //密码不匹配
       let updateData = null;
-      if (user['loginFail'] > 6) {
+      if (user['login_fail'] > 6) {
         //失败大于6次
         updateData = {
-          isLocked: 'Y',
-          unlockDate: moment().add(3, 'minutes').format('YYYY-M-D HH:mm:ss')
+          is_locked: 'Y',
+          unlock_date: moment().add(3, 'minutes').format('YYYY-M-D HH:mm:ss')
         };
       } else {
         updateData = {
-          loginFail: 1 + user['loginFail']
+          loginFail: 1 + user['login_fail']
         };
       }
-      await userORM.updateUserByUserId(user['userId'], updateData);
+      await userORM.updateRecordById(user['id'], updateData);
       this.throwError(errorMessage.ACCOUNT_OR_PWD_ERROR);
     }
   }
 
   async logout(userInfo) {
     const logAuditORM = this.ORMs.logAuditORM(this.connection);
-    await logAuditORM.addLog({
-      logType: 'logout',
+    await logAuditORM.addRecord({
+      log_type: 'logout',
       ...userInfo
     });
   }

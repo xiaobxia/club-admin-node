@@ -8,9 +8,9 @@ module.exports = class BroadcastService extends BaseService {
     super(connection);
   }
 
-  async getBroadcasts() {
+  async getBroadcasts(start, offset) {
     const broadcastORM = this.ORMs.broadcastORM(this.connection);
-    const broadcasts = await broadcastORM.getRecords();
+    const broadcasts = await broadcastORM.getAllRawRecords(start, offset);
     return broadcasts;
   }
 };
