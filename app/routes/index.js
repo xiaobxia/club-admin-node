@@ -21,5 +21,6 @@ router.post('/sys/user/register', controllers.userController.register());
 router.get('/sys/user/sendActiveEmail', controllers.userController.sendActiveEmail());
 //广播
 router.get('/broadcasts', controllers.broadcastController.list());
+router.get('/broadcasts/count', controllers.broadcastController.count());
 
 module.exports = router;

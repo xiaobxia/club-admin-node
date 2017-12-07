@@ -13,4 +13,10 @@ module.exports = class BroadcastService extends BaseService {
     const broadcasts = await broadcastORM.getAllRawRecords(start, offset);
     return broadcasts;
   }
+
+  async getBroadcastCount() {
+    const broadcastORM = this.ORMs.broadcastORM(this.connection);
+    const result = await broadcastORM.getAllRawRecordsCount();
+    return result[0].count;
+  }
 };
