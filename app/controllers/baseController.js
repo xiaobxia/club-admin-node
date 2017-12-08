@@ -10,20 +10,20 @@ module.exports = class BaseController extends BaseModel {
     this.services = services;
   }
 
-  paging(pageIndex, pageSize, defaultValue) {
-    let defaultPageIndex = 1,
+  paging(current, pageSize, defaultValue) {
+    let defaultCurrent = 1,
       defaultPageSize = 10;
     if (defaultValue) {
-      defaultPageIndex = defaultValue.pageIndex || defaultPageIndex;
+      defaultCurrent = defaultValue.current || defaultCurrent;
       defaultPageSize = defaultValue.pageSize || defaultPageSize;
     }
     //得是个整数
-    let pageIndexT = parseInt(pageIndex, 10),
+    let currentT = parseInt(current, 10),
       pageSizeT = parseInt(pageSize, 10),
-      index = isNaN(pageIndexT) ? defaultPageIndex : pageIndexT,
+      index = isNaN(currentT) ? defaultCurrent : currentT,
       size = isNaN(pageSizeT) ? defaultPageSize : pageSizeT;
     return {
-      pageIndex: index,
+      current: index,
       pageSize: size,
       start: (index - 1) * size,
       offset: size

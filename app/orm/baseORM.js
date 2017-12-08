@@ -9,6 +9,8 @@ module.exports = class BaseORM extends BaseModel {
     this.defaultSelect = ['*'];
     this.defaultWhere = {};
     this.defaultWhereType = 'AND';
+    this.defaultStart = 0;
+    this.defaultOffset = 10;
   }
 
   tranceSql(sql) {
@@ -22,9 +24,9 @@ module.exports = class BaseORM extends BaseModel {
   }
 
   query(sqlOption) {
-    let connection = this.getConnection();
+    const connection = this.getConnection();
     return new Promise((resolve, reject) => {
-      let query = connection.query(
+      const query = connection.query(
         sqlOption,
         (error, results, fields) => {
           if (error) {
@@ -42,7 +44,7 @@ module.exports = class BaseORM extends BaseModel {
   formatWhere(sql, where, whereType) {
     let values = [];
     let str = '';
-    for (let key in where) {
+    for (const key in where) {
       if (where.hasOwnProperty(key)) {
         values.push(key, where[key]);
         if (str === '') {
@@ -59,25 +61,50 @@ module.exports = class BaseORM extends BaseModel {
   }
 
   select(option) {
-    let _option = option || {};
-    let _select = _option.select || this.defaultSelect;
-    let _where = _option.where || this.defaultWhere;
-    let _whereType = _option.whereType || this.defaultWhereType;
-    let _table = _option.table || this.defaultTable;
-    let queryObj = this.formatWhere(`SELECT ?? FROM ${_table} {WHERE}`, _where, _whereType);
+    const _option = option || {};
+    const _select = _option.select || this.defaultSelect;
+    const _where = _option.where || this.defaultWhere;
+    const _whereType = _option.whereType || this.defaultWhereType;
+    const _table = _option.table || this.defaultTable;
+    const queryObj = this.formatWhere(`SELECT ?? FROM ${_table} {WHERE}`, _where, _whereType);
     return this.query({
       sql: queryObj.sql,
       values: [_select, ...queryObj.values]
     });
   }
 
+  pageSelect(option) {
+    const _option = option || {};
+    const _select = _option.select || this.defaultSelect;
+    const _where = _option.where || this.defaultWhere;
+    const _whereType = _option.whereType || this.defaultWhereType;
+    const _table = _option.table || this.defaultTable;
+    const _start = _option.start || this.defaultStart;
+    const _offset = _option.offset || this.defaultOffset;
+    const queryObj = this.formatWhere(`SELECT ?? FROM ${_table} {WHERE} ORDER BY id DESC LIMIT ?,?`, _where, _whereType);
+    return this.query({
+      sql: queryObj.sql,
+      values: [_select, ...queryObj.values, _start, _offset]
+    }).then((results) => {
+      if (!results.length) {
+        return results;
+      } else {
+        let ids = [];
+        for (let k = 0, len = results.length; k < len; k++) {
+          ids.push(results[k]['id']);
+        }
+        return this.getAllRawRecordsByIds(ids);
+      }
+    });
+  }
+
 
   count(option) {
-    let _option = option || {};
-    let _where = _option.where || this.defaultWhere || {};
-    let _whereType = _option.whereType || this.defaultWhereType;
-    let _table = _option.table || this.defaultTable;
-    let queryObj = this.formatWhere(`SELECT COUNT(*) AS count FROM ${_table} {WHERE}`, _where, _whereType);
+    const _option = option || {};
+    const _where = _option.where || this.defaultWhere || {};
+    const _whereType = _option.whereType || this.defaultWhereType;
+    const _table = _option.table || this.defaultTable;
+    const queryObj = this.formatWhere(`SELECT COUNT(*) AS count FROM ${_table} {WHERE}`, _where, _whereType);
     return this.query({
       sql: queryObj.sql,
       values: queryObj.values
@@ -85,13 +112,13 @@ module.exports = class BaseORM extends BaseModel {
   }
 
   update(option) {
-    let _option = option || {};
-    let _data = _option.data || {};
-    let _whereType = _option.whereType || this.defaultWhereType;
-    let _where = _option.where || this.defaultWhere;
-    let _table = _option.table || this.defaultTable;
+    const _option = option || {};
+    const _data = _option.data || {};
+    const _whereType = _option.whereType || this.defaultWhereType;
+    const _where = _option.where || this.defaultWhere;
+    const _table = _option.table || this.defaultTable;
     // _data = this.keyToHyphen(_data);
-    let queryObj = this.formatWhere(`UPDATE ${_table} SET ? {WHERE}`, _where, _whereType);
+    const queryObj = this.formatWhere(`UPDATE ${_table} SET ? {WHERE}`, _where, _whereType);
     return this.query({
       sql: queryObj.sql,
       values: [_data, ...queryObj.values]
@@ -99,9 +126,9 @@ module.exports = class BaseORM extends BaseModel {
   }
 
   insert(option) {
-    let _option = option || {};
-    let _data = _option.data || {};
-    let _table = _option.table || this.defaultTable;
+    const _option = option || {};
+    const _data = _option.data || {};
+    const _table = _option.table || this.defaultTable;
     // _data = this.keyToHyphen(_data);
     return this.query({
       sql: `INSERT INTO ${_table} SET ?`,
