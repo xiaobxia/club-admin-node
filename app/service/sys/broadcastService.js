@@ -30,7 +30,9 @@ module.exports = class BroadcastService extends BaseService {
 
   async getBroadcast(filter) {
     const broadcastORM = this.ORMs.broadcastORM(this.connection);
-    const result = await broadcastORM.select(filter);
+    const result = await broadcastORM.select({
+      where: filter
+    });
     return result[0];
   }
 
@@ -39,5 +41,19 @@ module.exports = class BroadcastService extends BaseService {
     data.uuid = md5(data.title + uuidv4());
     const result = await broadcastORM.addRecord(data);
     return result.insertId;
+  }
+
+  async saveBroadcastById(id, data) {
+    const broadcastORM = this.ORMs.broadcastORM(this.connection);
+    const result = await broadcastORM.updateRecordById(id, data);
+    console.log(result)
+    return result;
+  }
+
+  async deleteBroadcastById(id) {
+    const broadcastORM = this.ORMs.broadcastORM(this.connection);
+    const result = await broadcastORM.deleteRecordById(id);
+    console.log(result)
+    return result;
   }
 };

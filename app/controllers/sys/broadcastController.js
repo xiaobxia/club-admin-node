@@ -140,4 +140,68 @@ module.exports = class BroadcastController extends BaseController {
       }
     }
   }
+
+  /**
+   * POST
+   */
+  save() {
+    return async (ctx) => {
+      const body = ctx.request.body;
+      const id = parseInt(body.id, 10);
+      const data = this.localUtil.model(addModel, body);
+      this.validate(ctx, {
+        id: {type: 'number', required: true}
+      }, {id});
+      this.validate(ctx, {
+        platform: {type: 'string', required: true},
+        title: {type: 'string', required: true},
+        startDate: {type: 'dateTime', required: true},
+        endDate: {type: 'dateTime', required: true}
+      }, data);
+      let connection = null;
+      try {
+        connection = await this.mysqlGetConnection();
+        const broadcastService = this.services.broadcastService(connection);
+        //添加记录
+        await broadcastService.saveBroadcastById(id, this.localUtil.keyToHyphen(data));
+        this.wrapResult(ctx, {data: {success: true}});
+        this.mysqlRelease(connection);
+      } catch (error) {
+        this.mysqlRelease(connection);
+        if (error.type) {
+          this.wrapResult(ctx, {data: {msg: error.message, success: false}});
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+
+  deleteItem() {
+    return async (ctx) => {
+      const query = ctx.request.query;
+      const data = {
+        id: parseInt(query.id, 10)
+      };
+      this.validate(ctx, {
+        id: {type: 'number', required: true}
+      }, data);
+      let connection = null;
+      try {
+        connection = await this.mysqlGetConnection();
+        const broadcastService = this.services.broadcastService(connection);
+        //得到表
+        await broadcastService.deleteBroadcastById(data.id);
+        this.wrapResult(ctx, {data: {success: true}});
+        this.mysqlRelease(connection);
+      } catch (error) {
+        this.mysqlRelease(connection);
+        if (error.type) {
+          this.wrapResult(ctx, {data: {msg: error.message, success: false}});
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
 };

@@ -179,7 +179,7 @@ module.exports = class BaseORM extends BaseModel {
 
   getAllRawRecordsByIds(ids) {
     return this.query({
-      sql: `SELECT * FROM ${this.defaultTable} WHERE id IN (?)`,
+      sql: `SELECT * FROM ${this.defaultTable} WHERE id IN (?) ORDER BY id DESC`,
       values: [ids]
     });
   }

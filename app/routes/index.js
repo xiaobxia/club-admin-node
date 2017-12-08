@@ -20,9 +20,11 @@ router.get('/sys/user/register/result', controllers.userController.registerResul
 router.post('/sys/user/register', controllers.userController.register());
 router.get('/sys/user/sendActiveEmail', controllers.userController.sendActiveEmail());
 //广播
+router.get('/broadcasts/delete', controllers.broadcastController.deleteItem());
 router.get('/broadcasts/count', controllers.broadcastController.count());
 router.get('/broadcasts/item', controllers.broadcastController.item());
 router.get('/broadcasts', controllers.broadcastController.list());
 router.post('/broadcasts/add', controllers.broadcastController.add());
+router.post('/broadcasts/save', controllers.broadcastController.save());
 
 module.exports = router;
