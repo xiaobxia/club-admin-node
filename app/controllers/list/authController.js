@@ -60,26 +60,26 @@ module.exports = class AuthController extends BaseController {
    */
   logout() {
     return async (ctx) => {
-      const userInfoRaw = this.getSessionUser(ctx.session);
-      const userInfo = {
-        user_uuid: userInfoRaw.userUuid,
-        user_name: userInfoRaw.userName
-      };
-      if (userInfo) {
-        let connection = null;
-        try {
-          connection = await this.mysqlGetConnection();
-          this.mysqlBeginTransaction(connection);
-          const authService = this.services.authService(connection);
-          await authService.logout(userInfo);
-          this.mysqlCommit(connection);
-          this.mysqlRelease(connection);
-        } catch (error) {
-          this.mysqlRollback(connection);
-          this.mysqlRelease(connection);
-          throw error;
-        }
-      }
+      // const userInfoRaw = this.getSessionUser(ctx.session);
+      // const userInfo = {
+      //   user_uuid: userInfoRaw.userUuid,
+      //   user_name: userInfoRaw.userName
+      // };
+      // if (userInfo) {
+      //   let connection = null;
+      //   try {
+      //     connection = await this.mysqlGetConnection();
+      //     this.mysqlBeginTransaction(connection);
+      //     const authService = this.services.authService(connection);
+      //     await authService.logout(userInfo);
+      //     this.mysqlCommit(connection);
+      //     this.mysqlRelease(connection);
+      //   } catch (error) {
+      //     this.mysqlRollback(connection);
+      //     this.mysqlRelease(connection);
+      //     throw error;
+      //   }
+      // }
       ctx.session = null;
       this.wrapResult(ctx);
     }
