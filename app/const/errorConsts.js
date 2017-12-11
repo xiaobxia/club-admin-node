@@ -12,6 +12,7 @@ module.exports = {
     DUPLICATE_EMAIL: '此邮箱已被注册',
     FREQUENTLY_OPERATION: '请勿频繁操作',
     NO_EMAIL_RECORD: '没有邮件记录',
-    EMAIL_OVERDUE: '邮件记录过期'
+    EMAIL_OVERDUE: '邮件记录过期',
+    START_AFTER_END: '开始时间不能大于结束时间'
   }
 };

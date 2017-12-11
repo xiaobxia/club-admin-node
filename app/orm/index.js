@@ -1,10 +1,11 @@
 /**
  * Created by xiaobxia on 2017/11/1.
  */
-const UserORM = require('./sys/userORM');
-const LogAuditORM = require('./sys/logAuditORM');
-const EmailVerifyORM = require('./sys/emailVerifyORM');
-const BroadcastORM = require('./sys/broadcastORM');
+const UserORM = require('./list/userORM');
+const LogAuditORM = require('./list/logAuditORM');
+const EmailVerifyORM = require('./list/emailVerifyORM');
+const BroadcastORM = require('./list/broadcastORM');
+const SystemMessageORM = require('./list/systemMessageORM');
 
 module.exports = {
   userORM(connection) {
@@ -18,5 +19,8 @@ module.exports = {
   },
   broadcastORM(connection) {
     return new BroadcastORM(connection);
+  },
+  systemMessageORM(connection) {
+    return new SystemMessageORM(connection);
   }
 };
