@@ -11,6 +11,16 @@ module.exports = class UserService extends BaseService {
     super(connection);
   }
 
+  async getUser(filter) {
+    const errorMessage = this.localConst.errorMessage;
+    const userORM = this.ORMs.userORM(this.connection);
+    const result= await userORM.select({
+      where: filter
+    });
+    this.checkDBResult(result, errorMessage.NO_USER);
+    return result[0];
+  }
+
   async register(userInfo) {
     const userEmail = userInfo.email;
     const userName = userInfo.userName;

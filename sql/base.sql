@@ -8,12 +8,16 @@ DROP TABLE IF EXISTS broadcast;
 
 DROP TABLE IF EXISTS system_message;
 
+DROP TABLE IF EXISTS article;
+
+DROP TABLE IF EXISTS article_comment;
+
 /*==============================================================*/
 /* Table: sys_log_audit                                         */
 /*==============================================================*/
 CREATE TABLE sys_log_audit
 (
-   id                   INT(11) NOT NULL AUTO_INCREMENT,
+   id                   BIGINT(11) NOT NULL AUTO_INCREMENT,
    log_type             VARCHAR(10) NOT NULL,
    user_uuid            CHAR(32) NOT NULL COMMENT '用户的uuid',
    user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
@@ -52,7 +56,7 @@ AUTO_INCREMENT=1001 DEFAULT CHARSET=UTF8;
 /*==============================================================*/
 CREATE TABLE sys_email_verify
 (
-   id                   BIGINT(9) NOT NULL AUTO_INCREMENT,
+   id                   INT(9) NOT NULL AUTO_INCREMENT,
    user_name            VARCHAR(60) NOT NULL COMMENT '用户设置的用户名',
    email                VARCHAR(50) NOT NULL COMMENT '用户设置的邮箱地址',
    password             VARCHAR(60) NOT NULL COMMENT '用户设置的密码',
@@ -69,11 +73,11 @@ AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 /*==============================================================*/
 CREATE TABLE broadcast
 (
-   id                   BIGINT(9) NOT NULL AUTO_INCREMENT,
+   id                   INT(9) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '广播的uuid',
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   start_date          DATETIME COMMENT '广播上线时间',
+   start_date           DATETIME COMMENT '广播上线时间',
    end_date             DATETIME COMMENT '广播下线时间',
    state                CHAR(1) NOT NULL DEFAULT 'U' COMMENT 'U-未启用, A-在用，X-失效',
    platform             CHAR(10) NOT NULL DEFAULT 'web' COMMENT '广播上线平台',
@@ -88,7 +92,7 @@ AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 /*==============================================================*/
 CREATE TABLE system_message
 (
-   id                   BIGINT(9) NOT NULL AUTO_INCREMENT,
+   id                   INT(9) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '系统消息的uuid',
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -99,3 +103,44 @@ CREATE TABLE system_message
    PRIMARY KEY (id)
 )
 AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
+
+/*==============================================================*/
+/* Table: article                                               */
+/*==============================================================*/
+CREATE TABLE article
+(
+   id                   BIGINT(11) NOT NULL AUTO_INCREMENT,
+   uuid                 CHAR(32) NOT NULL COMMENT '文章的uuid',
+   user_id              INT(11) NOT NULL COMMENT '作者的id',
+   article_type         VARCHAR(30) NOT NULL COMMENT '文章的类型,question,friend,activity,game,partTime',
+   article_tags         VARCHAR(60) NOT NULL COMMENT '文章的标签',
+   title                VARCHAR(150) NOT NULL DEFAULT '' COMMENT '文章的标题',
+   url                  VARCHAR(255) NOT NULL DEFAULT '' COMMENT '文章的地址',
+   content              TEXT NOT NULL COMMENT '文章的内容',
+   like_count           INT(11) NOT NULL DEFAULT 0 COMMENT '文章的点赞数',
+   comment_count        INT(11) NOT NULL DEFAULT 0 COMMENT '文章的评论数',
+   create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   PRIMARY KEY (id)
+)
+AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
+
+/*==============================================================*/
+/* Table: article_comment                                       */
+/*==============================================================*/
+CREATE TABLE article_comment
+(
+   id                   BIGINT(11) NOT NULL AUTO_INCREMENT,
+   uuid                 CHAR(32) NOT NULL COMMENT '评论的uuid',
+   article_id           INT(11) NOT NULL COMMENT '评论文章的id',
+   owner_user_id        INT(11) NOT NULL COMMENT '发表评论的用户id',
+   target_user_id       INT(11) NOT NULL COMMENT '评论的目标用户id',
+   parent_id            INT(11) NOT NULL COMMENT '评论的目标id(id是某条评论的id)',
+   parent_type          VARCHAR(20) NOT NULL DEFAULT 'article' COMMENT '评论的目标类型,文章:article,评论:comment',
+   content              VARCHAR(600) NOT NULL DEFAULT '' COMMENT '评论的内容',
+   like_count           INT(11) NOT NULL DEFAULT 0 COMMENT '评论的点赞数',
+   create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   PRIMARY KEY (id)
+)
+AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
+

@@ -56,6 +56,7 @@ module.exports = class BroadcastService extends BaseService {
   async saveBroadcastById(id, data) {
     const broadcastORM = this.ORMs.broadcastORM(this.connection);
     this._checkDate(data['start_date'], data['end_date']);
+    data['update_date']= moment().format('YYYY-M-D HH:mm:ss');
     const result = await broadcastORM.updateRecordById(id, data);
     return result;
   }

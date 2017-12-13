@@ -35,5 +35,13 @@ router.get('/systemMessages/item', controllers.systemMessageController.item());
 router.get('/systemMessages', controllers.systemMessageController.list());
 router.post('/systemMessages/add', controllers.systemMessageController.add());
 router.post('/systemMessages/save', controllers.systemMessageController.save());
+//文章
+router.get('/articles/delete', controllers.articleController.deleteItem());
+router.get('/articles/count', controllers.articleController.count());
+router.get('/articles/item', controllers.articleController.item());
+router.get('/articles', controllers.articleController.list());
+router.post('/articles/add', controllers.articleController.add());
+router.post('/articles/save', controllers.articleController.save());
+
 
 module.exports = router;

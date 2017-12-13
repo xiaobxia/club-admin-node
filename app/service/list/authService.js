@@ -62,7 +62,7 @@ module.exports = class LoginService extends BaseService {
         };
       } else {
         updateData = {
-          loginFail: 1 + user['login_fail']
+          login_fail: 1 + user['login_fail']
         };
       }
       await userORM.updateRecordById(user['id'], updateData);

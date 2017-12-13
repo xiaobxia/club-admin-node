@@ -1,20 +1,24 @@
 /**
- * Created by xiaobxia on 2017/12/11.
+ * Created by xiaobxia on 2017/12/13.
  */
 const BaseController = require('../baseController');
 
 const filterListModel = {
-  state: ''
+  articleType: '',
+  articleTags: '',
+  title: '',
+  userName: ''
 };
 
 const addModel = {
+  userUuid: '',
+  articleType: '',
+  articleTags: '1|2',
   title: '',
-  startDate: '',
-  state: ''
+  content: ''
 };
 
-//只有重要消息时才会用到，其他消息使用广播
-module.exports = class SystemMessageController extends BaseController {
+module.exports = class ArticleController extends BaseController {
   /**
    * GET
    */
@@ -29,16 +33,16 @@ module.exports = class SystemMessageController extends BaseController {
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
+        const articleService = this.services.articleService(connection);
         //得到表
         const result = await Promise.all([
-          systemMessageService.getSystemMessages(filter, pagingModel.start, pagingModel.offset),
-          systemMessageService.getSystemMessageCount(filter)
+          articleService.getArticles(filter, pagingModel.start, pagingModel.offset),
+          articleService.getArticleCount(filter)
         ]);
         pagingModel.total = result[1];
         //转换格式
-        const systemMessageList = this.localUtil.listToCamelCase(result[0]);
-        this.wrapResult(ctx, {data: {success: true, list: systemMessageList, page: pagingModel}});
+        const articleList = this.localUtil.listToCamelCase(result[0]);
+        this.wrapResult(ctx, {data: {success: true, list: articleList, page: pagingModel}});
         this.mysqlRelease(connection);
       } catch (error) {
         this.mysqlRelease(connection);
@@ -59,9 +63,9 @@ module.exports = class SystemMessageController extends BaseController {
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
+        const articleService = this.services.articleService(connection);
         //得到表
-        const count = await systemMessageService.getSystemMessageCount();
+        const count = await articleService.getArticleCount();
         //转换格式
         this.wrapResult(ctx, {data: {success: true, count}});
         this.mysqlRelease(connection);
@@ -91,12 +95,12 @@ module.exports = class SystemMessageController extends BaseController {
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
+        const articleService = this.services.articleService(connection);
         //得到表
-        let systemMessage = await systemMessageService.getSystemMessage(data);
+        let article = await articleService.getArticle(data);
         //转换格式
-        systemMessage = this.localUtil.keyToCamelCase(systemMessage);
-        this.wrapResult(ctx, {data: {success: true, item: systemMessage}});
+        article = this.localUtil.keyToCamelCase(article);
+        this.wrapResult(ctx, {data: {success: true, item: article}});
         this.mysqlRelease(connection);
       } catch (error) {
         this.mysqlRelease(connection);
@@ -117,15 +121,21 @@ module.exports = class SystemMessageController extends BaseController {
       const body = ctx.request.body;
       const data = this.localUtil.model(addModel, body);
       this.validate(ctx, {
+        articleType: {type: 'string', required: true},
         title: {type: 'string', required: true},
-        startDate: {type: 'dateTime', required: true}
+        content: {type: 'string', required: true},
+        userUuid: {type: 'string', required: true}
       }, data);
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
+        const userService = this.services.userService(connection);
+        const user = await userService.getUser({uuid: data.userUuid});
+        const articleService = this.services.articleService(connection);
         //添加记录
-        await systemMessageService.addSystemMessage(this.localUtil.keyToHyphen(data));
+        delete data.userUuid;
+        data.userId = user.id;
+        await articleService.addArticle(this.localUtil.keyToHyphen(data));
         this.wrapResult(ctx, {data: {success: true}});
         this.mysqlRelease(connection);
       } catch (error) {
@@ -150,16 +160,24 @@ module.exports = class SystemMessageController extends BaseController {
       this.validate(ctx, {
         id: {type: 'number', required: true}
       }, {id});
+      //作者需要改为修改者的信息
       this.validate(ctx, {
+        articleType: {type: 'string', required: true},
         title: {type: 'string', required: true},
-        startDate: {type: 'dateTime', required: true}
+        content: {type: 'string', required: true},
+        userUuid: {type: 'string', required: true}
       }, data);
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
-        //添加记录
-        await systemMessageService.saveSystemMessageById(id, this.localUtil.keyToHyphen(data));
+        //得到作者信息
+        const userService = this.services.userService(connection);
+        const user = await userService.getUser({uuid: data.userUuid});
+        const articleService = this.services.articleService(connection);
+        //更新记录
+        delete data.userUuid;
+        data.userId = user.id;
+        await articleService.saveArticleById(id, this.localUtil.keyToHyphen(data));
         this.wrapResult(ctx, {data: {success: true}});
         this.mysqlRelease(connection);
       } catch (error) {
@@ -187,33 +205,9 @@ module.exports = class SystemMessageController extends BaseController {
       let connection = null;
       try {
         connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
+        const articleService = this.services.articleService(connection);
         //得到表
-        await systemMessageService.deleteSystemMessageById(data.id);
-        this.wrapResult(ctx, {data: {success: true}});
-        this.mysqlRelease(connection);
-      } catch (error) {
-        this.mysqlRelease(connection);
-        if (error.type) {
-          this.wrapResult(ctx, {data: {msg: error.message, success: false}});
-        } else {
-          throw error;
-        }
-      }
-    }
-  }
-  /**
-   * GET
-   */
-  clearTable() {
-    //清理上下线状态
-    return async (ctx) => {
-      let connection = null;
-      try {
-        connection = await this.mysqlGetConnection();
-        const systemMessageService = this.services.systemMessageService(connection);
-        //得到表
-        await systemMessageService.clearTable();
+        await articleService.deleteArticleById(data.id);
         this.wrapResult(ctx, {data: {success: true}});
         this.mysqlRelease(connection);
       } catch (error) {

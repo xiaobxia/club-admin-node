@@ -46,6 +46,7 @@ module.exports = class SystemMessageService extends BaseService {
 
   async saveSystemMessageById(id, data) {
     const systemMessageORM = this.ORMs.systemMessageORM(this.connection);
+    data['update_date']= moment().format('YYYY-M-D HH:mm:ss');
     const result = await systemMessageORM.updateRecordById(id, data);
     return result;
   }

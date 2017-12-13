@@ -6,6 +6,7 @@ const LogAuditORM = require('./list/logAuditORM');
 const EmailVerifyORM = require('./list/emailVerifyORM');
 const BroadcastORM = require('./list/broadcastORM');
 const SystemMessageORM = require('./list/systemMessageORM');
+const ArticleORM = require('./list/articleORM');
 
 module.exports = {
   userORM(connection) {
@@ -22,5 +23,8 @@ module.exports = {
   },
   systemMessageORM(connection) {
     return new SystemMessageORM(connection);
+  },
+  articleORM(connection) {
+    return new ArticleORM(connection);
   }
 };
