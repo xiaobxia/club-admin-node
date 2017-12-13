@@ -46,11 +46,28 @@ module.exports = class BaseORM extends BaseModel {
     let str = '';
     for (const key in where) {
       if (where.hasOwnProperty(key)) {
-        values.push(key, where[key]);
-        if (str === '') {
-          str += 'WHERE ??=?';
+        if (typeof where[key] === 'object') {
+          values.push(key, where[key].value);
+          if (where[key].type === 'like') {
+            if (str === '') {
+              str += 'WHERE ?? LIKE ?';
+            } else {
+              str += ` ${whereType} ?? LIKE ?`;
+            }
+          } else {
+            if (str === '') {
+              str += 'WHERE ??=?';
+            } else {
+              str += ` ${whereType} ??=?`;
+            }
+          }
         } else {
-          str += ` ${whereType} ??=?`;
+          values.push(key, where[key]);
+          if (str === '') {
+            str += 'WHERE ??=?';
+          } else {
+            str += ` ${whereType} ??=?`;
+          }
         }
       }
     }

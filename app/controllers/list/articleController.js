@@ -28,6 +28,12 @@ module.exports = class ArticleController extends BaseController {
       const filter = this.localUtil.keyToHyphen(
         this.localUtil.model(filterListModel, query)
       );
+      if (filter.title) {
+        filter.title = {
+          type: 'like',
+          value: `%${filter.title}%`
+        }
+      }
       //分页
       const pagingModel = this.paging(query.current, query.pageSize);
       let connection = null;
