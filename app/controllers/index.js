@@ -6,11 +6,13 @@ const UserController = require('./list/userController');
 const BroadcastController = require('./list/broadcastController');
 const SystemMessageController = require('./list/systemMessageController');
 const ArticleController = require('./list/articleController');
+const SysUserController = require('./list/sysUserController');
 
 module.exports = {
   authController: new AuthController(),
   userController: new UserController(),
   broadcastController: new BroadcastController(),
   systemMessageController: new SystemMessageController(),
-  articleController: new ArticleController()
+  articleController: new ArticleController(),
+  sysUserController: new SysUserController()
 };

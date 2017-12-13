@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS sys_log_audit;
 
 DROP TABLE IF EXISTS sys_user;
 
+DROP TABLE IF EXISTS user_archives;
+
 DROP TABLE IF EXISTS sys_email_verify;
 
 DROP TABLE IF EXISTS broadcast;
@@ -13,7 +15,7 @@ DROP TABLE IF EXISTS article;
 DROP TABLE IF EXISTS article_comment;
 
 /*==============================================================*/
-/* Table: sys_log_audit                                         */
+/* Table: sys_log_audit(登录日志)                                        */
 /*==============================================================*/
 CREATE TABLE sys_log_audit
 (
@@ -27,7 +29,7 @@ CREATE TABLE sys_log_audit
 AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 
 /*==============================================================*/
-/* Table: sys_user                                              */
+/* Table: sys_user(账户信息)                                             */
 /*==============================================================*/
 CREATE TABLE sys_user
 (
@@ -52,7 +54,31 @@ CREATE TABLE sys_user
 AUTO_INCREMENT=1001 DEFAULT CHARSET=UTF8;
 
 /*==============================================================*/
-/* Table: sys_email_verify                                     */
+/* Table: user_archives(用户档案)                                             */
+/*==============================================================*/
+CREATE TABLE user_archives
+(
+   id                   INT(11) NOT NULL AUTO_INCREMENT,
+   uuid                 CHAR(32) NOT NULL COMMENT '档案的uuid',
+   user_id              INT(11) NOT NULL COMMENT '用户id',
+   avatar               VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户头像地址',
+   true_name            VARCHAR(255) NOT NULL DEFAULT '' COMMENT '真实姓名',
+   gender               INT(1) NOT NULL DEFAULT 0 COMMENT '性别,0:未设置,1:男,2:女',
+   birthday             DATETIME COMMENT '用户的生日',
+   city                 VARCHAR(60) NOT NULL DEFAULT '' COMMENT '城市',
+   website              VARCHAR(255) NOT NULL DEFAULT '' COMMENT '个人网址',
+   company              VARCHAR(255) NOT NULL DEFAULT '' COMMENT '公司',
+   school               VARCHAR(255) NOT NULL DEFAULT '' COMMENT '学校',
+   job                  VARCHAR(60) NOT NULL DEFAULT '' COMMENT '职位',
+   introduce            VARCHAR(255) NOT NULL DEFAULT '' COMMENT '介绍',
+   create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   PRIMARY KEY (id)
+)
+AUTO_INCREMENT=1001 DEFAULT CHARSET=UTF8;
+
+/*==============================================================*/
+/* Table: sys_email_verify(邮箱验证)                                     */
 /*==============================================================*/
 CREATE TABLE sys_email_verify
 (
@@ -105,15 +131,15 @@ CREATE TABLE system_message
 AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 
 /*==============================================================*/
-/* Table: article                                               */
+/* Table: article(文章)                                               */
 /*==============================================================*/
 CREATE TABLE article
 (
    id                   BIGINT(11) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '文章的uuid',
    user_id              INT(11) NOT NULL COMMENT '作者的id',
-   article_type         VARCHAR(30) NOT NULL COMMENT '文章的类型,question,friend,activity,game,partTime',
-   article_tags         VARCHAR(60) NOT NULL COMMENT '文章的标签',
+   article_type         VARCHAR(30) NOT NULL DEFAULT 'question' COMMENT '文章的类型,question,friend,activity,game,partTime',
+   article_tags         VARCHAR(60) NOT NULL DEFAULT '' COMMENT '文章的标签',
    title                VARCHAR(150) NOT NULL DEFAULT '' COMMENT '文章的标题',
    url                  VARCHAR(255) NOT NULL DEFAULT '' COMMENT '文章的地址',
    content              TEXT NOT NULL COMMENT '文章的内容',
@@ -126,7 +152,7 @@ CREATE TABLE article
 AUTO_INCREMENT=1001 DEFAULT CHARACTER SET=UTF8;
 
 /*==============================================================*/
-/* Table: article_comment                                       */
+/* Table: article_comment(文章评论)                                       */
 /*==============================================================*/
 CREATE TABLE article_comment
 (

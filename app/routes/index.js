@@ -42,6 +42,13 @@ router.get('/articles/item', controllers.articleController.item());
 router.get('/articles', controllers.articleController.list());
 router.post('/articles/add', controllers.articleController.add());
 router.post('/articles/save', controllers.articleController.save());
+//用户
+router.get('/sysUsers/delete', controllers.sysUserController.deleteItem());
+router.get('/sysUsers/count', controllers.sysUserController.count());
+router.get('/sysUsers/item', controllers.sysUserController.item());
+router.get('/sysUsers', controllers.sysUserController.list());
+router.post('/sysUsers/add', controllers.sysUserController.add());
+router.post('/sysUsers/save', controllers.sysUserController.save());
 
 
 module.exports = router;
