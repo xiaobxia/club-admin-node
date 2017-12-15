@@ -11,6 +11,7 @@ module.exports = class BaseORM extends BaseModel {
     this.defaultWhereType = 'AND';
     this.defaultStart = 0;
     this.defaultOffset = 10;
+    this.model = {};
   }
 
   tranceSql(sql) {

@@ -14,6 +14,7 @@ const router = new Router({
 router.post('/sys/auth/login', controllers.authController.login());
 router.get('/sys/auth/checkLogin', controllers.authController.checkLogin());
 router.get('/sys/auth/logout', controllers.authController.logout());
+router.get('/sys/auth/getDeviceId', controllers.authController.getDeviceId());
 //注册
 router.get('/sys/user/register/active', controllers.userController.registerActive());
 router.get('/sys/user/register/result', controllers.userController.registerResult());
@@ -49,6 +50,9 @@ router.get('/sysUsers/item', controllers.sysUserController.item());
 router.get('/sysUsers', controllers.sysUserController.list());
 router.post('/sysUsers/add', controllers.sysUserController.add());
 router.post('/sysUsers/save', controllers.sysUserController.save());
+//登录记录
+router.get('/sysLogAudits', controllers.sysLogAuditController.list());
+
 
 
 module.exports = router;

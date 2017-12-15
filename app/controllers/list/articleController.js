@@ -4,9 +4,9 @@
 const BaseController = require('../baseController');
 
 const filterListModel = {
+  title: '',
   articleType: '',
   articleTags: '',
-  title: '',
   userName: ''
 };
 

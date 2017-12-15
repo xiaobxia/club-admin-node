@@ -7,6 +7,7 @@ const BroadcastService = require('./list/broadcastService');
 const SystemMessageService = require('./list/systemMessageService');
 const ArticleService = require('./list/articleService');
 const SysUserService = require('./list/sysUserService');
+const SysLogAuditService = require('./list/sysLogAuditService');
 
 module.exports = {
   authService(connection){
@@ -26,5 +27,8 @@ module.exports = {
   },
   sysUserService(connection) {
     return new SysUserService(connection);
+  },
+  sysLogAuditService(connection) {
+    return new SysLogAuditService(connection);
   }
 };

@@ -7,6 +7,7 @@ const BroadcastController = require('./list/broadcastController');
 const SystemMessageController = require('./list/systemMessageController');
 const ArticleController = require('./list/articleController');
 const SysUserController = require('./list/sysUserController');
+const SysLogAuditController = require('./list/sysLogAuditController');
 
 module.exports = {
   authController: new AuthController(),
@@ -14,5 +15,6 @@ module.exports = {
   broadcastController: new BroadcastController(),
   systemMessageController: new SystemMessageController(),
   articleController: new ArticleController(),
-  sysUserController: new SysUserController()
+  sysUserController: new SysUserController(),
+  sysLogAuditController: new SysLogAuditController()
 };

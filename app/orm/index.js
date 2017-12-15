@@ -8,6 +8,7 @@ const BroadcastORM = require('./list/broadcastORM');
 const SystemMessageORM = require('./list/systemMessageORM');
 const ArticleORM = require('./list/articleORM');
 const SysUserORM = require('./list/sysUserORM');
+const SysLogAuditORM = require('./list/sysLogAuditORM');
 
 module.exports = {
   userORM(connection) {
@@ -30,5 +31,8 @@ module.exports = {
   },
   sysUserORM(connection) {
     return new SysUserORM(connection);
+  },
+  sysLogAuditORM(connection) {
+    return new SysLogAuditORM(connection);
   }
 };

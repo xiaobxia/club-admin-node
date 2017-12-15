@@ -7,6 +7,12 @@ module.exports = class LoginService extends BaseService {
     super(connection);
   }
 
+  /**
+   * 登录
+   * @param account
+   * @param password
+   * @returns {Promise.<*>}
+   */
   async login(account, password) {
     const errorMessage = this.localConst.errorMessage;
     const userORM = this.ORMs.userORM(this.connection);
@@ -44,12 +50,6 @@ module.exports = class LoginService extends BaseService {
           unlock_date: null
         });
       }
-      const logAuditORM = this.ORMs.logAuditORM(this.connection);
-      await logAuditORM.addRecord({
-        log_type: 'login',
-        user_uuid: user['uuid'],
-        user_name: user['user_name']
-      });
       return user;
     } else {
       //密码不匹配
@@ -70,11 +70,17 @@ module.exports = class LoginService extends BaseService {
     }
   }
 
-  async logout(userInfo) {
-    const logAuditORM = this.ORMs.logAuditORM(this.connection);
-    await logAuditORM.addRecord({
-      log_type: 'logout',
-      ...userInfo
-    });
-  }
+  /**
+   * 退出登录
+   * @param userInfo
+   * @returns {Promise.<void>}
+   * 注释原因：无需添加记录
+   */
+  // async logout(userInfo) {
+  //   const logAuditORM = this.ORMs.logAuditORM(this.connection);
+  //   await logAuditORM.addRecord({
+  //     log_type: 'logout',
+  //     ...userInfo
+  //   });
+  // }
 };
