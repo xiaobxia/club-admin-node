@@ -99,10 +99,10 @@ module.exports = class BaseORM extends BaseModel {
     const _table = _option.table || this.defaultTable;
     const _start = _option.start || this.defaultStart;
     const _offset = _option.offset || this.defaultOffset;
-    const queryObj = this.formatWhere(`SELECT ?? FROM ${_table} {WHERE} ORDER BY id DESC LIMIT ?,?`, _where, _whereType);
+    const queryObj = this.formatWhere(`SELECT id FROM ${_table} {WHERE} ORDER BY id DESC LIMIT ?,?`, _where, _whereType);
     return this.query({
       sql: queryObj.sql,
-      values: [_select, ...queryObj.values, _start, _offset]
+      values: [...queryObj.values, _start, _offset]
     }).then((results) => {
       if (!results.length) {
         return results;
@@ -111,7 +111,7 @@ module.exports = class BaseORM extends BaseModel {
         for (let k = 0, len = results.length; k < len; k++) {
           ids.push(results[k]['id']);
         }
-        return this.getAllRawRecordsByIds(ids);
+        return this.getAllRawRecordsByIds(ids, _select);
       }
     });
   }
@@ -195,10 +195,11 @@ module.exports = class BaseORM extends BaseModel {
     return this.query(`SELECT COUNT(*) AS count FROM ${this.defaultTable}`);
   }
 
-  getAllRawRecordsByIds(ids) {
+  getAllRawRecordsByIds(ids, select) {
+    const _select = select || this.defaultSelect;
     return this.query({
-      sql: `SELECT * FROM ${this.defaultTable} WHERE id IN (?) ORDER BY id DESC`,
-      values: [ids]
+      sql: `SELECT ?? FROM ${this.defaultTable} WHERE id IN (?) ORDER BY id DESC`,
+      values: [_select, ids]
     });
   }
 

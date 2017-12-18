@@ -18,6 +18,8 @@ DROP TABLE IF EXISTS article_comment;
 
 DROP TABLE IF EXISTS user_collect_like;
 
+DROP TABLE IF EXISTS user_focus;
+
 DROP TABLE IF EXISTS user_integral;
 
 DROP TABLE IF EXISTS survey;
@@ -47,7 +49,6 @@ CREATE TABLE sys_user
 (
    id                   INT(11) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '用户的uuid',
-   user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
    password             VARCHAR(60) NOT NULL COMMENT '登陆账户密码',
    email                VARCHAR(50) NOT NULL DEFAULT '',
    mobile               VARCHAR(20) NOT NULL DEFAULT '',
@@ -73,6 +74,7 @@ CREATE TABLE user_archives
    id                   INT(11) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '档案的uuid',
    user_id              INT(11) NOT NULL COMMENT '用户id',
+   user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
    type                 VARCHAR(10) NOT NULL COMMENT '用户的类型',
    avatar               VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户头像地址',
    true_name            VARCHAR(255) NOT NULL DEFAULT '' COMMENT '真实姓名',
@@ -168,7 +170,7 @@ CREATE TABLE article
    cover                VARCHAR(255) NOT NULL DEFAULT '' COMMENT '文章的封面地址',
    url                  VARCHAR(255) NOT NULL DEFAULT '' COMMENT '文章的地址',
    content              TEXT NOT NULL COMMENT '文章的内容',
-   state                CHAR(1) NOT NULL DEFAULT 'U' COMMENT 'U-未启用, A-在用，X-失效',
+   state                CHAR(1) NOT NULL DEFAULT 'A' COMMENT 'U-未启用, A-在用，X-失效',
    state_date           DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '状态变更的日期',
    create_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    update_date          DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -183,6 +185,7 @@ CREATE TABLE article_info
 (
    id                   BIGINT(11) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '文章信息的uuid',
+   article_id           INT(11) NOT NULL COMMENT '文章的id',
    top                  CHAR(1) NOT NULL DEFAULT 'N' COMMENT 'Y置顶，N不置顶。默认N',
    good                 CHAR(1) NOT NULL DEFAULT 'N' COMMENT 'Y精品，N不是精品。默认N',
    like_count           INT(11) NOT NULL DEFAULT 0 COMMENT '文章的点赞数',
