@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS sys_log_audit;
 
 DROP TABLE IF EXISTS sys_user;
 
-DROP TABLE IF EXISTS user_archives;
+DROP TABLE IF EXISTS user_archive;
 
 DROP TABLE IF EXISTS sys_email_verify;
 
@@ -67,15 +67,15 @@ CREATE TABLE sys_user
 AUTO_INCREMENT=1001 DEFAULT CHARSET=UTF8;
 
 /*==============================================================*/
-/* Table: user_archives(用户档案)                                             */
+/* Table: user_archive(用户档案)                                             */
 /*==============================================================*/
-CREATE TABLE user_archives
+CREATE TABLE user_archive
 (
    id                   INT(11) NOT NULL AUTO_INCREMENT,
    uuid                 CHAR(32) NOT NULL COMMENT '档案的uuid',
    user_id              INT(11) NOT NULL COMMENT '用户id',
    user_name            VARCHAR(60) NOT NULL COMMENT '登陆账户名',
-   type                 VARCHAR(10) NOT NULL COMMENT '用户的类型',
+   type                 VARCHAR(10) NOT NULL DEFAULT 'ordinary' COMMENT '用户的类型,admin,ordinary',
    avatar               VARCHAR(255) NOT NULL DEFAULT '' COMMENT '用户头像地址',
    true_name            VARCHAR(255) NOT NULL DEFAULT '' COMMENT '真实姓名',
    gender               INT(1) NOT NULL DEFAULT 0 COMMENT '性别,0:未设置,1:男,2:女',
